@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+dist/
+build/
+
+# Environments
+env/
+venv/
+venv_*/
+\.venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Mac / Linux
+.DS_Store
+*.swp
+
+# Data and large files (keep only source JSON and small artifacts)
+*.csv
+*.h5
+*.ckpt
+*.pt
+*.pth
+
+# Ignore local install script logs
+*.log

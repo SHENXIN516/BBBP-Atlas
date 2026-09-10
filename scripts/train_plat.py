@@ -194,7 +194,7 @@ def main():
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    model = GraphTransformer(
+    model = SubGT(
         in_channels=38,
         edge_features=6,
         num_hidden_channels=256,

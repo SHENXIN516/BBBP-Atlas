@@ -1,0 +1,35 @@
+{
+  "status": "reconstructed",
+  "setting": "small",
+  "split_seed": 88,
+  "method": "train_test_split(test_size=0.2), then train_test_split(test_size=0.5); shuffle=True, stratify=None",
+  "input_file": "training_samples2.csv",
+  "input_sha256": "86b42fdce2ddc5c254c84f2433d6bbc54dc0574e66c607cb7dfdca29e6fbc2dd",
+  "ordered_structure_label_sha256": "5a9d240af0b3789afea9c848d79897f241c0acc16457c9c4d2465ed73c48cfc0",
+  "counts": {
+    "train": 7292,
+    "val": 912,
+    "test": 912
+  },
+  "label_counts": {
+    "train": {
+      "0": 2566,
+      "1": 4726
+    },
+    "val": {
+      "0": 336,
+      "1": 576
+    },
+    "test": {
+      "0": 337,
+      "1": 575
+    }
+  },
+  "excluded_invalid_n": 1,
+  "versions": {
+    "numpy": "2.3.2",
+    "pandas": "2.3.2",
+    "sklearn": "1.7.2",
+    "rdkit": "2025.03.5"
+  }
+}

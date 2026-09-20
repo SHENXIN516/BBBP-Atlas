@@ -1,0 +1,5 @@
+scripts/train_small_molecule_repro.py -text
+scripts/train_fixed_peptide_comparison.py -text
+scripts/train_cross_modal_completion.py -text
+plat_model/**/*.py -text
+plat_model/*.py -text

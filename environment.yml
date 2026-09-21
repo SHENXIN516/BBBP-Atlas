@@ -1,3 +1,4 @@
+name: bbbp-atlas
 channels:
   - conda-forge
   - nvidia
@@ -28,13 +29,6 @@ dependencies:
   - charset-normalizer=3.4.7
   - contourpy=1.3.2
   - cpython=3.10.20
-  - cuda-cudart=11.8.89
-  - cuda-cupti=11.8.87
-  - cuda-libraries=11.8.0
-  - cuda-nvrtc=11.8.89
-  - cuda-nvtx=11.8.86
-  - cuda-runtime=11.8.0
-  - cuda-version=13.2
   - cycler=0.12.1
   - cyrus-sasl=2.1.28
   - dbus=1.16.2
@@ -90,14 +84,8 @@ dependencies:
   - libcblas=3.9.0
   - libclang-cpp22.1=22.1.4
   - libclang13=22.1.4
-  - libcublas=11.11.3.6
-  - libcufft=10.9.0.58
-  - libcufile=1.17.0.44
   - libcups=2.3.3
-  - libcurand=10.4.2.51
   - libcurl=8.20.0
-  - libcusolver=11.4.1.48
-  - libcusparse=11.7.5.86
   - libdeflate=1.25
   - libdrm=2.4.125
   - libedit=3.1.20250104
@@ -129,10 +117,8 @@ dependencies:
   - libnetcdf=4.10.0
   - libnghttp2=1.68.1
   - libnl=3.11.0
-  - libnpp=11.8.0.86
   - libnsl=2.0.1
   - libntlm=1.8
-  - libnvjpeg=11.9.0.86
   - libogg=1.3.5
   - libopenblas=0.3.32
   - libopengl=1.7.0
@@ -198,9 +184,6 @@ dependencies:
   - python-dateutil=2.9.0.post0
   - python-tzdata=2026.1
   - python_abi=3.10
-  - pytorch=2.5.1
-  - pytorch-cuda=11.8
-  - pytorch-mutex=1.0
   - pytz=2026.1.post1
   - pyyaml=6.0.3
   - qhull=2020.2
@@ -223,7 +206,6 @@ dependencies:
   - tk=8.6.13
   - toml=0.10.2
   - tomli=2.4.1
-  - torchtriton=3.1.0
   - typing-extensions=4.15.0
   - typing_extensions=4.15.0
   - tzdata=2025c
@@ -251,6 +233,9 @@ dependencies:
   - zlib-ng=2.3.3
   - zstd=1.5.7
   - pip:
+      - --extra-index-url https://download.pytorch.org/whl/cu130
+      - --find-links https://data.pyg.org/whl/torch-2.11.0+cu130.html
+      - --only-binary=torch,torchvision,torchaudio,torch-cluster,torch-scatter,torch-sparse
       - aiohappyeyeballs==2.6.1
       - aiohttp==3.13.5
       - aiosignal==1.4.0
@@ -306,8 +291,6 @@ dependencies:
       - pyjwt==2.12.1
       - pylatexenc==2.10
       - pynndescent==0.6.0
-      - pytorch-geometric==0.0.2
-      - rdkit-pypi==2022.9.5
       - requests==2.33.1
       - scipy==1.15.3
       - scripts==3.0
@@ -318,14 +301,13 @@ dependencies:
       - stack-data==0.6.3
       - stua==0.3
       - tld==0.13.2
-      - torch==2.11.0
-      - torch-cluster==1.6.3+pt25cu118
+      - torch==2.11.0+cu130
+      - torch-cluster==1.6.3+pt211cu130
       - torch-geometric==2.7.0
-      - torch-scatter==2.1.2+pt25cu118
-      - torch-sparse==0.6.18+pt25cu118
-      - torch-spline-conv==1.2.2+pt25cu118
-      - torchaudio==2.11.0
-      - torchvision==0.26.0
+      - torch-scatter==2.1.2+pt211cu130
+      - torch-sparse==0.6.18+pt211cu130
+      - torchaudio==2.11.0+cu130
+      - torchvision==0.26.0+cu130
       - tqdm==4.67.3
       - traitlets==5.14.3
       - triton==3.6.0

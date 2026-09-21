@@ -1,168 +1,154 @@
 # BBBP-Atlas
 
-BBBP-Atlas is a curated blood–brain barrier permeability (BBBP) resource and graph-based molecular learning framework for BBB permeability analysis, descriptor validation, and interpretable cheminformatics research.
+BBBP-Atlas predicts blood–brain barrier permeability for small molecules and peptides using atom- and bond-level molecular graphs. **OmniBBBP** contains 10,218 records: 9,316 small molecules and 902 peptides. Peptides are supplied as explicit molecular structures rather than FASTA strings.
 
-The repository integrates standardized BBB-related datasets, RDKit-based molecular preprocessing, graph neural network utilities, and reproducible benchmark pipelines for BBB permeability modeling. It is designed to support both dataset-centric exploration and graph-based machine learning experiments in CNS drug discovery.
+![BBBP-Atlas framework](figure1.svg)
 
-An interactive web platform for molecular browsing and dataset exploration is publicly available at:
+[Web platform](https://cadd.drugflow.com/bbbp/) · [Data splits](docs/DATA_SPLITTING.md) · [Checkpoints](ckpt/)
 
-https://cadd.drugflow.com/bbbp/
+## Repository structure
 
----
+| Directory or file | Contents |
 
-## Highlights
+|---|---|
 
-- Curated BBB permeability datasets in JSON and CSV formats
-- Standardized RDKit preprocessing and descriptor generation
-- Graph-based molecular representation learning with PyTorch Geometric
-- Reproducible training and evaluation pipeline
-- Support for both small molecules and peptide-related BBB datasets
-- Interactive web platform for visualization and molecular exploration
+| [dataset/](dataset/) | Classification datasets and quantitative BBB records |
 
----
+| [splits/](splits/) | Fixed random train, validation, and test sets |
 
-## Repository Structure
+| [docs/DATA_SPLITTING.md](docs/DATA_SPLITTING.md) | Split methods, sample counts, and source-file hashes |
 
-```text
-BBBP-Atlas/
-├── dataset/              # BBBP datasets
-├── plat_model/           # Graph neural network modules
-├── scripts/              # Training and preprocessing scripts
-├── ckpt/                 # Model checkpoints and outputs
-├── environment.yml       # Conda environment definition
-└── README.md
-```
+| [ckpt/](ckpt/) | Model configurations and weights |
 
----
+| [macro/](macro/) | Cross-modal training, evaluation, and inference utilities |
 
-## Included Datasets
+| [plat_model/](plat_model/) | Graph-model implementation |
 
-All datasets are stored under `dataset/`.
+| [scripts/](scripts/) | Original training script and split-generation code |
 
-Current dataset variants include:
+| [environment.yml](environment.yml) | Installation dependencies |
 
-- `bbbp_benchmark.json`
-- `bbbp_benchmark.csv`
-- `bbbp_quantitative.json`
-- `bbbp_small_molecule.json`
-- `bbbp_small_molecule.csv`
-- `bbbp_peptide.json`
-- `bbbp_peptides.csv`
 
-The datasets are organized for downstream molecular property prediction, graph construction, and benchmark evaluation.
+## Data and evaluation
 
----
+The collection contains a 10,018-record development pool and a separate balanced holdout of 200 small molecules from the same integrated collection. Labels are `1 = BBB+` and `0 = BBB−`.
 
-## Molecular Preprocessing
+| Dataset | Files | Records |
 
-Molecular graphs are constructed using RDKit and converted into PyTorch Geometric graph objects.
+|---|---|---:|
 
-Atom-level features currently include atom type, degree, formal charge, radical electrons, hybridization state, aromaticity, and hydrogen count. Bond-level features include bond type, conjugation, ring membership, and optional stereochemical information.
+| Full small-molecule collection | [CSV](dataset/bbbp_small_molecule.csv) | 9,316 |
 
----
+| Small-molecule development set | [JSON](dataset/bbbp_small_molecule.json) | 9,116 |
 
-## Model Pipeline
+| Peptides | [CSV](dataset/bbbp_peptides.csv), [JSON](dataset/bbbp_peptide.json) | 902 |
 
-The main training entry point is:
+| Balanced small-molecule holdout | [CSV](dataset/bbbp_benchmark.csv), [JSON](dataset/bbbp_benchmark.json) | 200 |
 
-```bash
-python scripts/train_plat.py
-```
 
-The pipeline performs molecular parsing from SMILES strings, graph construction with RDKit, dataset splitting, graph caching, graph-based model training, and evaluation using multiple classification metrics.
+The small-molecule CSV includes the benchmark records, the development JSON excludes them. Use the released split files for the fixed random evaluations. Quantitative measurements are provided separately in [bbbp_quantitative.json](dataset/bbbp_quantitative.json).
 
-Reported metrics include:
 
-- ROC-AUC
-- Accuracy
-- F1-score
-- MCC
-- BA
-- SE
-- SP
+| Evaluation | Split seed | Train / validation / test |
 
-The current implementation is intended as a reproducible graph-based BBBP benchmark pipeline and lightweight research framework for molecular learning experiments.
+|---|---:|---|
 
----
+| [Small-molecule random split](splits/small_seed88/) | 88 | 7,292 / 912 / 912 |
+
+| [Mixed random split](splits/mixed_seed42/) | 42 | 8,014 / 1,002 / 1,002 |
+
+| Cross-modal comparison | 42 | Small molecules: 7,292 / 912 / 912; peptides: 722 / 90 / 90 |
+
+
+The two random splits use unstratified 8:1:1 partitioning. The cross-modal comparison uses a separate frozen peptide similarity-cluster split and model seeds 42–46. Its `fixed_split_manifest.csv` and `protocol.json` are required by the training workflow and are not included in the random-split directories. Figure 4 uses a separate design: five mixed holdouts of 200 records, with one model per split.
+
+## Checkpoints
+
+
+| File | Model seed | Checkpoint selection |
+
+|---|---:|---|
+
+| [small_split88.pt](ckpt/small_split88.pt) | 44 | Legacy small-molecule run; maximum test accuracy |
+
+| [Unweighted_joint_split42.pt](ckpt/Unweighted_joint_split42.pt) | 42 | Minimum mean small-molecule and peptide validation loss |
+
+| [Modality-macro_joint_split42.pt](ckpt/Modality-macro_joint_split42.pt) | 42 | Minimum mean small-molecule and peptide validation loss |
+
+
+Each file contains `model_config` and `model_state_dict` for one trained model. Filename suffixes identify the split seed. The small-molecule run also used test accuracy for learning-rate scheduling; its internal-test result is therefore a test-selected result, not an untouched holdout estimate.
 
 ## Installation
 
-We recommend using Conda for environment management.
 
 ```bash
+
+git clone https://github.com/SHENXIN516/BBBP-Atlas.git
+
+cd BBBP-Atlas
+
 conda env create -f environment.yml
+
 conda activate bbbp-atlas
+
+python -m pip check
+
 ```
 
-If dependency resolution is slow, `mamba` is recommended:
+The environment targets Linux with CUDA-enabled PyTorch and PyG extensions. GPU execution requires a compatible NVIDIA driver.
+
+
+## Training and inference
+  
+| Script in `macro/scripts/` | Purpose |
+
+|---|---|
+
+| `train_small_molecule_repro.py` | Small-molecule and mixed-model training core |
+
+| `train_fixed_peptide_comparison.py` | Small-only, peptide-only, and joint comparisons |
+
+| `train_cross_modal_completion.py` | Modality-macro training and evaluation |
+
+| `predict.py` | Prediction from an exported release package |
+
+| `verify_inference.py` | Comparison with stored predictions |
+
+| `test_inference.py` | Input, metric, and loading utility tests |
+
+The training scripts use `macro/` as their working root. Source CSV files are available in [LiBP/dataset](https://github.com/SHENXIN516/LiBP/tree/main/dataset). The core accepts `--data`; fixed-comparison preparation expects `training_samples2.csv`, `train_9.csv`, `train_scaffold.csv`, and `external_samples2.csv` under `macro/dataset/`. Preserve their row order and contents.
+  
+
+For the similarity-cluster experiment, pass the frozen workspace containing `fixed_split_manifest.csv` and `protocol.json` through `--source-workspace`. The generic `prepare` command creates a random peptide split, not the similarity-cluster split.
+
+
+`predict.py` takes `--package-root` and requires a release package with `release_index.json`, `SHA256SUMS.txt`, model sources, and per-model weights and metadata. The standalone files in `ckpt/` do not supply that package structure.
+
+
+Run the utility tests from the repository root:
+
 
 ```bash
-mamba env create -f environment.yml
+
+python -m unittest discover -s macro/scripts -p 'test_inference.py' -v
+
 ```
 
----
+The original `scripts/train_plat.py` has local data-path settings and test-based learning-rate scheduling. Use the `macro/` workflows for validation-selected cross-modal training.
 
-## Quick Start
 
-After activating the environment:
+## Citation and license
 
-```bash
-python scripts/train_plat.py
-```
 
-Before training, update the dataset and cache paths in the configuration section of the script if necessary.
-
-The pipeline will automatically preprocess molecules, cache graph objects, split the dataset, train the model, and report evaluation metrics.
-
----
-
-## Data Format
-
-The CSV-based training pipeline expects at least the following columns:
-
-- `type`
-- `sequence`
-- `label`
-
-Rows with `type == "SMILES"` are interpreted as molecular entries.
-
-JSON datasets follow a unified molecular record structure containing SMILES strings, molecular descriptors, task annotations, and associated metadata.
-
----
-
-## Reproducibility Notes
-
-Descriptor values may vary slightly depending on the RDKit version, descriptor implementation, and molecular standardization strategy. For strict reproducibility, we recommend using the provided Conda environment and preserving the original preprocessing workflow.
-
----
-
-## Web Platform
-
-BBBP-Atlas also provides an interactive web interface for molecular browsing and dataset exploration:
-
-https://cadd.drugflow.com/bbbp/
-
-The platform is intended to support rapid inspection of BBB-related molecular records and facilitate lightweight interactive analysis.
-
----
-
-## Citation
-
-If you use BBBP-Atlas in your research, please cite the corresponding publication and repository.
+Please cite the BBBP-Atlas manuscript when using the data or code. Record the repository commit and checkpoint used in your analysis.
 
 ```bibtex
 @article{BBBPAtlas2026,
   title={BBBP-Atlas: Unified Interpretable Modeling of BBB Permeability across Small Molecules and Peptides},
-  author={Xin Shen, Qun Su, Hao Luo, Qiaolin Gou, Jingxuan Ge, Jike Wang, Yu Kang, Tingjun Hou},
-  journal={...},
+  author={Xin Shen, Qun Su, Hao Luo, Qiaolin Gou, Jingxuan Ge, Tingjun Hou, Jike Wang, Yu Kang},
+  journal={Chinese Chemical Letters, Under Review},
   year={2026}
 }
 ```
 
----
-
-## License
-
-This project is released under the MIT License.
-
-Third-party datasets and dependencies retain their original licenses.
+Code is released under the [MIT License](License). Third-party data and dependencies retain their respective licenses.

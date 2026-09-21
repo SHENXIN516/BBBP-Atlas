@@ -23,7 +23,7 @@ BBBP-Atlas predicts blood–brain barrier permeability for small molecules and p
 
 ## Data and evaluation
 
-The collection contains a 10,018-record development pool and a separate balanced holdout of 200 small molecules from the same integrated collection. Labels are `1 = BBB+` and `0 = BBB−`.
+The collection contains a 10,018-record development pool and a separate balanced holdout of 200 small molecules from the same integrated collection. Labels are `BBB+ = 1` and `BBB− = 0`.
 
 | Dataset | Files | Records |
 |---|---|---:|

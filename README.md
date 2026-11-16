@@ -75,9 +75,9 @@ The environment targets Linux with CUDA-enabled PyTorch and PyG extensions. GPU 
 | `verify_inference.py` | Comparison with stored predictions |
 | `test_inference.py` | Input, metric, and loading utility tests |
 
-For the similarity-cluster experiment, pass the frozen workspace containing `fixed_split_manifest.csv` and `protocol.json` through `--source-workspace`. The generic `prepare` command creates a random peptide split, not the similarity-cluster split.
+For the similarity-cluster experiment, pass the frozen workspace containing `fixed_split_manifest.csv` and `protocol.json` through `--source-workspace`. The generic `prepare` command creates a random peptide split.
 
-`predict.py` takes `--package-root` and requires a release package with `release_index.json`, `SHA256SUMS.txt`, model sources, and per-model weights and metadata. The standalone files in `ckpt/` do not supply that package structure.
+`predict.py` takes `--package-root` and requires a release package with `release_index.json`, model sources, and per-model weights and metadata.
 
 Run the utility tests from the repository root:
 
@@ -85,17 +85,17 @@ Run the utility tests from the repository root:
 python -m unittest discover -s macro/scripts -p 'test_inference.py' -v
 ```
 
-The original `scripts/train_plat.py` has local data-path settings and test-based learning-rate scheduling. Use the `macro/` workflows for validation-selected cross-modal training.
+Use the `macro/` workflows for validation-selected cross-modal training.
 
 ## Citation and license
 
-Please cite the BBBP-Atlas manuscript when using the data or code. Record the repository commit and checkpoint used in your analysis.
+Please cite the BBBP-Atlas manuscript when using the data or code.
 
 ```bibtex
 @article{BBBPAtlas2026,
-  title={BBBP-Atlas: Unified Interpretable Modeling of BBB Permeability across Small Molecules and Peptides},
+  title={BBBP-Atlas: Unified interpretable modeling of blood–brain barrier permeability across small molecules and peptides},
   author={Xin Shen, Qun Su, Hao Luo, Qiaolin Gou, Jingxuan Ge, Tingjun Hou, Jike Wang, Yu Kang},
-  journal={Chinese Chemical Letters, Under Review},
+  journal={Chinese Chemical Letters, 10.1016/j.cclet.2026.113617},
   year={2026}
 }
 ```
